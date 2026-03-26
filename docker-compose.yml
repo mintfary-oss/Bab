@@ -1,16 +1,25 @@
 version: "3.9"
+
 services:
   web:
     build: .
     container_name: babyblog_web
     restart: unless-stopped
     env_file: .env
-    volumes: ["./app:/app", "media_data:/app/uploads", "static_data:/app/staticfiles"]
+    volumes:
+      - ./app:/app
+      - media_data:/app/uploads
+      - static_data:/app/staticfiles
     depends_on:
-      db: {condition: service_healthy}
-      redis: {condition: service_started}
-    ports: ["8000:8000"]
-    networks: [babyblog_net]
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    networks:
+      - babyblog_net
+
   db:
     image: postgres:16-alpine
     container_name: babyblog_db
@@ -19,59 +28,90 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-babyblog}
       POSTGRES_USER: ${POSTGRES_USER:-babyblog}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-babyblog_secret}
-    volumes: [pg_data:/var/lib/postgresql/data]
+    volumes:
+      - pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-babyblog}"]
       interval: 5s
       timeout: 5s
       retries: 5
-    ports: ["5432:5432"]
-    networks: [babyblog_net]
+    ports:
+      - "5432:5432"
+    networks:
+      - babyblog_net
+
   redis:
     image: redis:7-alpine
     container_name: babyblog_redis
     restart: unless-stopped
-    networks: [babyblog_net]
+    ports:
+      - "6379:6379"
+    networks:
+      - babyblog_net
+
   celery_worker:
     build: .
     container_name: babyblog_celery
     restart: unless-stopped
     env_file: .env
     command: celery -A babyblog worker -l info --concurrency=2
-    volumes: ["./app:/app", "media_data:/app/uploads"]
+    volumes:
+      - ./app:/app
+      - media_data:/app/uploads
     depends_on:
-      db: {condition: service_healthy}
-      redis: {condition: service_started}
-    networks: [babyblog_net]
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - babyblog_net
+
   celery_beat:
     build: .
     container_name: babyblog_beat
     restart: unless-stopped
     env_file: .env
     command: celery -A babyblog beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes: ["./app:/app"]
+    volumes:
+      - ./app:/app
     depends_on:
-      db: {condition: service_healthy}
-      redis: {condition: service_started}
-    networks: [babyblog_net]
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - babyblog_net
+
   nginx:
     image: nginx:1.25-alpine
     container_name: babyblog_nginx
     restart: unless-stopped
-    ports: ["80:80"]
-    volumes: ["./nginx/conf.d:/etc/nginx/conf.d:ro", "static_data:/var/www/static:ro", "media_data:/var/www/uploads:ro"]
-    depends_on: [web]
-    networks: [babyblog_net]
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - static_data:/var/www/static:ro
+      - media_data:/var/www/uploads:ro
+    depends_on:
+      - web
+    networks:
+      - babyblog_net
+
   mailhog:
     image: mailhog/mailhog:latest
     container_name: babyblog_mailhog
     restart: unless-stopped
-    ports: ["8025:8025", "1025:1025"]
-    networks: [babyblog_net]
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - babyblog_net
+
 volumes:
   pg_data:
   media_data:
   static_data:
+
 networks:
   babyblog_net:
     driver: bridge
