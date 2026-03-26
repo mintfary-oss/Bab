@@ -25,12 +25,9 @@ cd Bab
 ```bash
 cp .env.example .env
 ```
+Файл `.env` уже содержит все настройки для локального запуска. Ничего менять не нужно.
 
-Откройте `.env` и замените `DJANGO_SECRET_KEY` на случайную строку:
-```bash
-# Генерация ключа:
-python3 -c "import secrets; print(secrets.token_urlsafe(50))"
-```
+> Для продакшна рекомендуется заменить `DJANGO_SECRET_KEY` и `POSTGRES_PASSWORD` на свои значения.
 
 ### 3. Запуск
 ```bash
