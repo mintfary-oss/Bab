@@ -18,12 +18,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем приложение
 COPY app/ .
 
-# Создаём директории
-RUN mkdir -p /app/uploads/images \
+# Создаём все необходимые директории
+RUN mkdir -p \
+    /app/uploads/images \
     /app/uploads/videos \
     /app/uploads/documents \
     /app/uploads/thumbnails \
-    /app/staticfiles
+    /app/staticfiles \
+    /app/locale/ru/LC_MESSAGES
 
 # Точка входа
 COPY scripts/entrypoint.sh /entrypoint.sh

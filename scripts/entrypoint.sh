@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "=== BabyBlog: Ожидание базы данных ==="
+echo "=== BabyBlog: Waiting for database ==="
 
-# Ожидание доступности PostgreSQL
+# Wait for PostgreSQL
 until python -c "
 import psycopg2
 import os
@@ -16,15 +16,15 @@ conn = psycopg2.connect(
 )
 conn.close()
 " 2>/dev/null; do
-    echo "БД недоступна, ожидание..."
+    echo "Database unavailable, waiting..."
     sleep 2
 done
 
-echo "=== BabyBlog: Применение миграций ==="
+echo "=== BabyBlog: Running migrations ==="
 python manage.py migrate --noinput
 
-echo "=== BabyBlog: Сбор статических файлов ==="
+echo "=== BabyBlog: Collecting static files ==="
 python manage.py collectstatic --noinput
 
-echo "=== BabyBlog: Запуск ==="
+echo "=== BabyBlog: Starting server ==="
 exec "$@"
