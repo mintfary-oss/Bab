@@ -7,7 +7,6 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - ./app:/app
       - media_data:/app/uploads
       - static_data:/app/staticfiles
     depends_on:
@@ -15,8 +14,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     networks:
       - babyblog_net
 
@@ -35,8 +34,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    ports:
-      - "5432:5432"
     networks:
       - babyblog_net
 
@@ -44,8 +41,6 @@ services:
     image: redis:7-alpine
     container_name: babyblog_redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     networks:
       - babyblog_net
 
@@ -56,7 +51,6 @@ services:
     env_file: .env
     command: celery -A babyblog worker -l info --concurrency=2
     volumes:
-      - ./app:/app
       - media_data:/app/uploads
     depends_on:
       db:
@@ -72,8 +66,6 @@ services:
     restart: unless-stopped
     env_file: .env
     command: celery -A babyblog beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - ./app:/app
     depends_on:
       db:
         condition: service_healthy

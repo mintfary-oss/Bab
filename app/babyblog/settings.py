@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─── Переменные окружения ───
 env = environ.Env(
     DJANGO_DEBUG=(bool, True),
-    DJANGO_ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "0.0.0.0"]),
+    DJANGO_ALLOWED_HOSTS=(list, ["*"]),
     POSTGRES_DB=(str, "babyblog"),
     POSTGRES_USER=(str, "babyblog"),
     POSTGRES_PASSWORD=(str, "babyblog_secret"),

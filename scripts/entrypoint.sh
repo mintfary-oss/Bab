@@ -3,7 +3,6 @@ set -e
 
 echo "=== BabyBlog: Waiting for database ==="
 
-# Wait for PostgreSQL
 until python -c "
 import psycopg2
 import os
@@ -15,8 +14,9 @@ conn = psycopg2.connect(
     port=os.environ.get('POSTGRES_PORT', '5432'),
 )
 conn.close()
+print('Database is ready')
 " 2>/dev/null; do
-    echo "Database unavailable, waiting..."
+    echo "Database unavailable, retrying in 2s..."
     sleep 2
 done
 
