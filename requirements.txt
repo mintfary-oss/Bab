@@ -1,0 +1,15 @@
+Django>=4.2,<5.0
+django-environ>=0.11
+django-crispy-forms>=2.0
+crispy-bootstrap5>=0.7
+django-cleanup>=8.0
+psycopg2-binary>=2.9
+Pillow>=10.0
+celery>=5.3
+redis>=5.0
+django-celery-beat>=2.5
+djangorestframework>=3.14
+django-ratelimit>=4.1
+argon2-cffi>=23.1
+python-magic>=0.4
+gunicorn>=21.2

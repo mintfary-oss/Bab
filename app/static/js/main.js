@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".alert-dismissible").forEach(function(a){setTimeout(function(){bootstrap.Alert.getOrCreateInstance(a).close();},5000);});});

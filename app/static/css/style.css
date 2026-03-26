@@ -1,0 +1,1 @@
+:root{--bb-primary:#e91e8c;}body{font-family:sans-serif;min-height:100vh;display:flex;flex-direction:column;}main{flex:1;}.card{border:none;border-radius:12px;}.btn-primary{background:var(--bb-primary);border-color:var(--bb-primary);}footer{margin-top:auto;}
